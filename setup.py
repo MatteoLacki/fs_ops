@@ -1,9 +1,8 @@
-# This Python file uses the following encoding: utf-8
 from setuptools import setup, find_packages
 
 setup(  name='fs_ops',
         packages=find_packages(),
-        version='0.0.1',
+        version='0.0.2',
         description='Description.',
         long_description='Long description.',
         author='MatteoLacki',
@@ -16,7 +15,4 @@ setup(  name='fs_ops',
                      'Topic :: Scientific/Engineering :: Chemistry',
                      'Programming Language :: Python :: 3.6',
                      'Programming Language :: Python :: 3.7'],
-        install_requires=['numpy',
-                          'networkx',
-                          'pandas',
-                          'scipy'])
+        install_requires=[])

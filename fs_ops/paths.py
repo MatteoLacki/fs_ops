@@ -24,5 +24,3 @@ def find_suffixed_files(paths, file_patterns, extensions=[]):
             for file_pattern in file_patterns:
                 yield from p.glob(file_pattern)
 
-# paths = ['/home/matteo/Projects/waters/data', '/home/matteo/Projects/waters/data/T181207_07_stats.json']
-# list(find_suffixed_files(paths, ['**/*_IA_workflow.xml'], ['.xml','.json']))

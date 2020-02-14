@@ -3,7 +3,7 @@ import platform
 
 settings = dict(name='fs_ops',
         packages=find_packages(),
-        version='0.0.3',
+        version='0.0.4',
         description='Description.',
         long_description='Long description.',
         author='MatteoLacki',

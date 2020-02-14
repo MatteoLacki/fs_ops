@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
+import platform
 
-setup(  name='fs_ops',
+settings = dict(name='fs_ops',
         packages=find_packages(),
-        version='0.0.2',
+        version='0.0.3',
         description='Description.',
         long_description='Long description.',
         author='MatteoLacki',
@@ -15,4 +16,12 @@ setup(  name='fs_ops',
                      'Topic :: Scientific/Engineering :: Chemistry',
                      'Programming Language :: Python :: 3.6',
                      'Programming Language :: Python :: 3.7'],
-        install_requires=[])
+        install_requires=[],
+        scripts = ["bin/grep_paths"])
+
+if platform.system() == 'Windows':
+    settings['scripts'] = ["bin/grep_paths.py"]
+else:
+    settings['scripts'] = ["bin/grep_paths"]
+
+setup(**settings)

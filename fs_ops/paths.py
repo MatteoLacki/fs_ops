@@ -12,11 +12,12 @@ def find_suffixed_files(paths, file_patterns, extensions=[]):
     Arguments:
         paths (list): List of paths (str, pathlib.Path). List.
         file_patterns (list): List of file patterns to match.
+        extensions (list): List of strings: acceptable extensions.
     Yields:
         pathlib.Path: paths to the required files.
     """
     for p in paths:
-        p = Path(p).expanduser()
+        p = Path(p).resolve().expanduser()
         # is_file checks for existance too
         if p.is_file() and p.suffix in extensions:
             yield p

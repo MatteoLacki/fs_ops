@@ -84,7 +84,7 @@ def mv(source, target, file_name_list=[]):
         return linuxmove(source, target, file_name_list)
 
 
-def if_exists_append_version(p):
+def version_folder(p):
     """Find the first free path for storing data by modifying the sample_set_no.
 
     Starting from: path/sample_set_no/acquired_name

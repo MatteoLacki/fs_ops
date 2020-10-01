@@ -30,10 +30,6 @@ def linuxcopy(source, target, file_name_list=[]):
         for fn in file_name_list:
             shutil.copy2(str(source/fn), str(target/fn))
     else:
-        if source.is_dir():
-            # like cp -r /home/test/A /home/test/B
-            # must result in /home/test/B/A 
-            target = target/source.name
         shutil.copytree(str(source), str(target), dirs_exist_ok=True)
     return 1
 
@@ -41,19 +37,8 @@ def linuxcopy(source, target, file_name_list=[]):
 def linuxmove(source, target, file_name_list):
     target = pathlib.Path(target)
     source = pathlib.Path(source)
-    if file_name_list:
-        for fn in file_name_list:
-            shutil.move(str(source/fn), str(target/fn))
-    else:
-        if source.is_dir():
-            # like cp -r /home/test/A /home/test/B
-            # must result in /home/test/B/A 
-            target = target/source.name
-            shutil.copytree(str(source), str(target))
-            shutil.rmtree(str(source), str(target))
-        else:
-            target.mkdir(parents=True, exist_ok=True)
-            shutil.move(str(source), str(target/source.name))   
+    linuxcopy(source, target, file_name_list)
+    rm(source) 
     return 1
 
 
@@ -95,20 +80,20 @@ def version_folder(p):
         p (str): Path to check and modify.
     """
     i = 0
-    q = Path(p)
+    q = pathlib.Path(p)
     while q.exists() and q.is_dir():
         i += 1
         q = p.parent/f"{p.name}__v{i}"
-        # q = Path(f"{p.parent}__v{i}")/p.name
+        # q = pathlib.Path(f"{p.parent}__v{i}")/p.name
     return q
 
 
 def rm(pth):
     """Removes recursively the folder and everything below in the file tree."""
-    pth = Path(pth)
+    pth = pathlib.Path(pth)
     for child in pth.glob('*'):
         if child.is_file():
             child.unlink()
         else:
-            rm_tree(child)
+            shutil.rmtree(child)
     pth.rmdir()

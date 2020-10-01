@@ -1,6 +1,6 @@
 %load_ext autoreload
 %autoreload 2
-from fs_ops.copy import cp, mv
+from fs_ops.base import cp, mv
 import shutil
 import pathlib
 
@@ -8,7 +8,8 @@ A = 'tests/A'
 res = 'tests'
 
 cp('tests/A', 'tests/res')
-
+mv('tests/A', 'tests/res')
+mv('tests/B', 'tests/res2')
 
 source, target = 'tests/A','tests/res'
 files = []
@@ -19,9 +20,7 @@ target = pathlib.Path(target).expanduser().resolve()
 cp(source, target)
 mv(source, target)
 
-mv('tests/B/b', 'tests/res/C')
-mv('tests/A/a0', 'tests/res')
+mv('tests/B/b', 'tests/res')
 # cp('tests/A', 'tests/res')
 
 shutil.copy2(source, target)
-

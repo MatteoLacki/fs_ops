@@ -5,6 +5,9 @@ import pathlib
 from platform import system
 
 
+Path = lambda p: pathlib.Path(p).expanduser().resolve()
+
+
 def robocopy(source, target, file_name_list=[], params='/it /r:10 /w:10 /E /z'):
     """Copy files.
     
@@ -21,6 +24,32 @@ def robocopy(source, target, file_name_list=[], params='/it /r:10 /w:10 /E /z'):
     """
     cmd = f"robocopy {str(source)} {str(target)} {' '.join(str(fn) for fn in file_name_list)} {params}"
     return subprocess.run(cmd.split()).returncode
+
+
+def cp_general(source, target):
+    source = Path(source)
+    target = Path(target)
+    if source.is_file():
+        shutil.copyfile(source, target)
+    else:
+        shutil.copytree(source, target)
+
+
+def cp_windows(source, target):
+    source = Path(source)
+    target = Path(target)
+    if source.is_dir():
+        robocopy(source, target)
+    else:
+        if target.is_dir():
+            robocopy(source.parent, target, [source.name])
+        elif source.name == target.name:
+            robocopy(source.parent, target.parent, [source.name])
+        else:
+            shutil.copyfile(source, target)
+
+
+cp = cp_windows if system()=='Windows' else cp_general
 
 
 def linuxcopy(source, target, file_name_list=[]):
@@ -42,24 +71,24 @@ def linuxmove(source, target, file_name_list):
     return 1
 
 
-def cp(source, target, file_name_list=[]):
-    """Copy files from source to target.
+# def cp(source, target, file_name_list=[]):
+#     """Copy files from source to target.
 
-    Args:
-        source (str): Path to source.
-        target (str): Path to target.
-        file_name_list (list): list of strings
-    Returns:
-        int: code for success/failure."""
-    source = pathlib.Path(source).expanduser().resolve()
-    target = pathlib.Path(target).expanduser().resolve()
-    if source.is_file():
-        file_name_list.append(source.name)
-        source = source.parent 
-    if system()=='Windows':
-        return robocopy(source, target, file_name_list)
-    else:
-        return linuxcopy(source, target, file_name_list)
+#     Args:
+#         source (str): Path to source.
+#         target (str): Path to target.
+#         file_name_list (list): list of strings
+#     Returns:
+#         int: code for success/failure."""
+#     source = pathlib.Path(source).expanduser().resolve()
+#     target = pathlib.Path(target).expanduser().resolve()
+#     if source.is_file():
+#         file_name_list.append(source.name)
+#         source = source.parent 
+#     if system()=='Windows':
+#         return robocopy(source, target, file_name_list)
+#     else:
+#         return linuxcopy(source, target, file_name_list)
 
 
 def mv(source, target, file_name_list=[]):
@@ -74,10 +103,15 @@ def version_folder(p):
 
     Starting from: path/sample_set_no/acquired_name
     The procedure checks recursively if that path exists.
-    If it does, append a free version number to sample_set_no.
+    If it does, append a free version number to sample_set_no., 
+    e.g.              Y:/RES/2019-008/O191017-04
+    replaced with:    Y:/RES/2019-008/O191017-04__v1
 
     Args:
         p (str): Path to check and modify.
+
+    Return:
+        pathlib.Path: corrected path.
     """
     i = 0
     q = pathlib.Path(p)
@@ -88,12 +122,10 @@ def version_folder(p):
     return q
 
 
-def rm(pth):
-    """Removes recursively the folder and everything below in the file tree."""
-    pth = pathlib.Path(pth)
-    for child in pth.glob('*'):
-        if child.is_file():
-            child.unlink()
-        else:
-            shutil.rmtree(child)
-    pth.rmdir()
+def rm(p):
+    """Removes folder or a file."""
+    p = Path(p)
+    if p.is_file():
+        p.unlink()
+    else:
+        shutil.rmtree(str(p))

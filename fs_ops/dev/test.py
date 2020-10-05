@@ -24,3 +24,5 @@ mv('tests/B/b', 'tests/res')
 # cp('tests/A', 'tests/res')
 
 shutil.copy2(source, target)
+
+

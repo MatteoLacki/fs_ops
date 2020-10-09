@@ -18,9 +18,9 @@ test_files:
 clean_tests:
 	rm -rf tests
 copy_bruker:
-	msync.py /home/matteo/Projects/fs_ops/tests /home/matteo/Projects/fs_ops/res *.d --min_copy_hours .001 
+	msync.py /home/matteo/Projects/fs_ops/tests /home/matteo/Projects/fs_ops/res *.d --min_copy_hours .001 --debug
 copy_thermo:
-	msync.py /home/matteo/Projects/fs_ops/tests /home/matteo/Projects/fs_ops/res *.raw --min_copy_hours .001
+	msync.py /home/matteo/Projects/fs_ops/tests /home/matteo/Projects/fs_ops/res *.raw --min_copy_hours .001 --debug
 copy_bruker_win:
 	python C:/Projects/fs_ops/bin/msync.py C:/Projects/fs_ops/tests C:/Projects/fs_ops/res *.d --min_copy_hours .001 --debug
 copy_thermo_win:

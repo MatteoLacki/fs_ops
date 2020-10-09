@@ -4,14 +4,13 @@ No support for check-sums (our LAN is stable).
 Simple wrapper around robocopy.
 """
 import argparse
+import logging
 import pathlib
 from platform import system
 from pprint import pprint
 
 from fs_ops.utils import age
 from fs_ops.base import cp, mv, rm
-
-
 
 Path = lambda p: pathlib.Path(p).expanduser().resolve()
 
@@ -27,12 +26,15 @@ ARG('--min_copy_hours',   type=float,  default  = 4.0,
 ARG('--min_delete_hours', type=float,  default = 24.0,
     help='Minimal age in hours for the file to be deleted. For a folder, the age of the youngest file within.')
 ARG('--debug', action='store_true', help='Run in debug mode.')
-
+ARG('--log_path', type=Path, help='Path to store logs.',
+    default='~/Projects/fs_ops/sync.log' if system() == 'Linux' else 'C:/Projects/fs_ops/sync.log')
 
 ap = ap.parse_args()
 if ap.debug:
     pprint(ap.__dict__)
 
+logging.basicConfig(filename=ap.log_path, level=logging.INFO,
+                    format='%(asctime)s:%(name)s:%(levelname)s:%(message)s:')
 
 def iter_sources_targes(source, target, patterns):
     for pat in patterns:
@@ -46,33 +48,15 @@ if ap.debug:
 
 for s,t in st:
     if age(s) >= ap.min_copy_hours:
+        logging.info(f'Copying {s} to {t}.')
         cp(s,t)
         if age(s) >= ap.min_delete_hours:
+            logging.info(f'Removing {s}.')
             rm(s) 
         else:
-            print(f'{s} is too young to delete: {age(s)}')
+            logging.info(f'{s} is too young to delete: {age(s)}')
     else:
-        print(f'{s} is too young to copy: {age(s)}')  
-
-
-# Path('~/Projects/fs_ops/res/Z.d').unlink()
-# Path('/home/matteo/Projects/fs_ops/res/a.tdf').unlink()
-# shutil.rmtree('/home/matteo/Projects/fs_ops/res/Z.d')
-# shutil.rmtree('/home/matteo/Projects/fs_ops/res/a.tdf')
-# source = Path('/home/matteo/Projects/fs_ops/tests')
-# f = '*.d'
-# f = 'A.d'
-# list(source.glob(f))
-
-# cp('/home/matteo/Projects/fs_ops/tests/A.d/a.tdf',
-#    '/home/matteo/Projects/fs_ops/tests')
-# cp('/home/matteo/Projects/fs_ops/tests/A.d',
-#    '/home/matteo/Projects/fs_ops/res')
-
-# cp('/home/matteo/Projects/fs_ops/tests/A.d/a.tdf',
-#    '/home/matteo/Projects/fs_ops/res/z.tdf')
-# cp('/home/matteo/Projects/fs_ops/tests/A.d',
-#    '/home/matteo/Projects/fs_ops/res/Z.d')
+        logging.info(f'{s} is too young to copy: {age(s)}')
 
 
 

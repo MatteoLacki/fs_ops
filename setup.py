@@ -17,7 +17,7 @@ settings = dict(
                  'Topic :: Scientific/Engineering :: Chemistry',
                  'Programming Language :: Python :: 3.6',
                  'Programming Language :: Python :: 3.7'],
-    install_requires=[],
+    install_requires=['checksumdir', 'flask'],
     scripts = ["bin/grep_paths.py",
                "bin/msync.py"])
 

@@ -128,8 +128,8 @@ def rm(p):
     if system()=='Windows':
         cmd = rf"powershell.exe Remove-Item -Recurse -Force {p}"
         comp_proc = subprocess.run(cmd)
-        if comp_proc.returncode != '0':
-            print('Error')
+        if comp_proc.returncode != 0:
+            print('Error.')
     else:
         if p.is_file():
             p.unlink()

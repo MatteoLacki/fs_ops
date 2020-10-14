@@ -23,8 +23,8 @@ ARG('target', type=Path, help='The (network) folder to sync to.')
 ARG('patterns', nargs='+', help='Files/folders/patterns (compatible with python glob) to sync.')
 ARG('--min_copy_hours',   type=float,  default  = 4.0,
     help='Minimal age in hours for the file to be copied. For a folder, the age of the youngest file within.')
-ARG('--min_delete_hours', type=float,  default = 24.0,
-    help='Minimal age in hours for the file to be deleted. For a folder, the age of the youngest file within.')
+ARG('--min_delete_hours', type=float,  default = -1,
+    help='Minimal age in hours for the file to be deleted. For a folder, the age of the youngest file within. Set to -1 not to remove files.')
 ARG('--debug', action='store_true', help='Run in debug mode.')
 ARG('--log_path', type=Path, help='Path to store logs.',
     default='~/Projects/fs_ops/sync.log' if system() == 'Linux' else 'C:/Projects/fs_ops/sync.log')
@@ -50,7 +50,7 @@ for s,t in st:
     if age(s) >= ap.min_copy_hours:
         logging.info(f'Copying {s} to {t}.')
         cp(s,t)
-        if age(s) >= ap.min_delete_hours:
+        if ap.min_delete_hours >= 0 and age(s) >= ap.min_delete_hours:
             logging.info(f'Removing {s}.')
             rm(s) 
         else:

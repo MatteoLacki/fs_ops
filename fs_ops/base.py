@@ -124,8 +124,15 @@ def version_folder(p):
 
 def rm(p):
     """Removes folder or a file."""
-    p = Path(p)
-    if p.is_file():
-        p.unlink()
+    p = Path(p).expanduser().resolve()
+    if system()=='Windows':
+        cmd = rf"powershell.exe Remove-Item -Recurse -Force {p}"
+        comp_proc = subprocess.run(cmd)
+        if comp_proc.returncode != '0':
+            print('Error')
     else:
-        shutil.rmtree(str(p))
+        if p.is_file():
+            p.unlink()
+        else:
+            print('Trying to delete a folder.')
+            shutil.rmtree(str(p), ignore_errors=True)

@@ -83,6 +83,7 @@ for s,t in st:
             input("Press a key to finish the program.")
             sys.exit()
         else:
+            logging.info(f'checksums aggree')
             if ap.min_delete_hours >= 0:
                 if age(s) >= ap.min_delete_hours:
                     logging.info(f'Removing {s}.')

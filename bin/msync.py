@@ -74,22 +74,24 @@ for s,t in st:
     if age(s) >= ap.min_copy_hours:
         logging.info(f'Copying {s} to {t}.')
         local_checksum = check_sum_here(s)
+        logging.info(f'Sha256 for {s} = {local_checksum}')
         cp(s,t)
         remote_checksum = check_sum_there(t)
+        logging.info(f'Sha256 for {t} = {remote_checksum}')
         if local_checksum != remote_checksum:
             loggin.error(f'{s} and {t} have different checksums.')
             input("Press a key to finish the program.")
             sys.exit()
-        if ap.min_delete_hours >= 0:
-            if age(s) >= ap.min_delete_hours:
-                logging.info(f'Removing {s}.')
-                rm(s) 
-            else:
-                logging.info(f'{s} is too young to delete: {age(s)}')
         else:
-            logging.info('copy only mode')
+            if ap.min_delete_hours >= 0:
+                if age(s) >= ap.min_delete_hours:
+                    logging.info(f'Removing {s}.')
+                    rm(s) 
+                else:
+                    logging.info(f'{s} is too young to delete: {age(s)}')
+            else:
+                logging.info('copy only mode')
     else:
         logging.info(f'{s} is too young to copy: {age(s)}')
-
 
 

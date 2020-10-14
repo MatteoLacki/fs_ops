@@ -20,6 +20,8 @@ def folder_check_sum(folder_path, algo='sha256'):
 
 def check_sum(path):
     path = Path(path).expanduser().resolve()
+    if not path.exists():
+        raise RuntimeError(f"Path missing: {path}")
     if path.is_dir():
         return folder_check_sum(path)
     elif path.is_file():

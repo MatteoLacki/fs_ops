@@ -45,7 +45,10 @@ if ap.debug:
 
 logging.basicConfig(filename=ap.log_path, level=logging.INFO,
                     format='%(asctime)s:%(name)s:%(levelname)s:%(message)s:')
-
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+logging.getLogger('').addHandler(console)
+log = logging.getLogger('syncFiles.py')
 
 
 if ap.server_ip_port is not None:
@@ -72,27 +75,27 @@ if ap.debug:
 
 for s,t in st:
     if age(s) >= ap.min_copy_hours:
-        logging.info(f'Copying {s} to {t}.')
+        log.info(f'Copying {s} to {t}.')
         local_checksum = check_sum_here(s)
-        logging.info(f'Sha256 for {s} = {local_checksum}')
         cp(s,t)
         remote_checksum = check_sum_there(t)
-        logging.info(f'Sha256 for {t} = {remote_checksum}')
+        log.info(f'Sha256 for {s} = {local_checksum}')
+        log.info(f'Sha256 for {t} = {remote_checksum}')
         if local_checksum != remote_checksum:
-            loggin.error(f'{s} and {t} have different checksums.')
+            log.error(f'{s} and {t} have different checksums.')
             input("Press a key to finish the program.")
             sys.exit()
         else:
-            logging.info(f'checksums aggree')
+            log.info(f'checksums aggree')
             if ap.min_delete_hours >= 0:
                 if age(s) >= ap.min_delete_hours:
-                    logging.info(f'Removing {s}.')
+                    log.info(f'Removing {s}.')
                     rm(s) 
                 else:
-                    logging.info(f'{s} is too young to delete: {age(s)}')
+                    log.info(f'{s} is too young to delete: {age(s)}')
             else:
-                logging.info('copy only mode')
+                log.info('copy only mode')
     else:
-        logging.info(f'{s} is too young to copy: {age(s)}')
+        log.info(f'{s} is too young to copy: {age(s)}')
 
 

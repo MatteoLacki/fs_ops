@@ -14,9 +14,13 @@ from fs_ops.base import cp, mv, rm
 
 Path = lambda p: pathlib.Path(p).expanduser().resolve()
 
+epilog = r"""
+Example: python msync.py C:\test V:\test *.raw" --min_copy_hours 4 --min_delete_hours 48 --debug
+"""
+
 ap = argparse.ArgumentParser(description='Sync files/folders.',
                              formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-                             epilog=r"Example: python msync.py C:\test V:\test *.raw")
+                             epilog=epilog)
 ARG = ap.add_argument
 ARG("source", type=Path, help="The folder to copy from.")
 ARG('target', type=Path, help='The (network) folder to sync to.')
@@ -50,11 +54,14 @@ for s,t in st:
     if age(s) >= ap.min_copy_hours:
         logging.info(f'Copying {s} to {t}.')
         cp(s,t)
-        if ap.min_delete_hours >= 0 and age(s) >= ap.min_delete_hours:
-            logging.info(f'Removing {s}.')
-            rm(s) 
+        if ap.min_delete_hours >= 0:
+            if age(s) >= ap.min_delete_hours:
+                logging.info(f'Removing {s}.')
+                rm(s) 
+            else:
+                logging.info(f'{s} is too young to delete: {age(s)}')
         else:
-            logging.info(f'{s} is too young to delete: {age(s)}')
+            logging.info('copy only mode')
     else:
         logging.info(f'{s} is too young to copy: {age(s)}')
 

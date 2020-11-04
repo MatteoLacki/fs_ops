@@ -30,7 +30,7 @@ ARG("source", type=Path, help="The folder to copy from.")
 ARG('target', type=Path, help='The (network) folder to sync to.')
 ARG('patterns', nargs='+', help='Files/folders/patterns (compatible with python glob) to sync.')
 ARG('--min_copy_hours',   type=float,  default  = 4.0,
-    help='Minimal age in hours for the file to be copied. For a folder, the age of the youngest file within.')
+    help='Minimal age in hours for the file to be copied. For a folder, the age of the youngest file within. We count time since last modification.')
 ARG('--min_delete_hours', type=float,  default = -1,
     help='Minimal age in hours for the file to be deleted. For a folder, the age of the youngest file within. Set to -1 not to remove files.')
 ARG('--debug', action='store_true', help='Run in debug mode.')

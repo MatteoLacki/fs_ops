@@ -2,27 +2,27 @@
 %autoreload 2
 from checksumdir import dirhash
 from pathlib import Path
+from collections import Counter
+import logging
 
+from fs_ops.utils import age
 from fs_ops.base import cp
 from fs_ops.sender import Sender
-from fs_ops.checksums import check_sum
+from fs_ops.checksums import check_sum, file_check_sum, all_source_hashes_aggree
 
-d = Path('D:/Data/raw_sync_test/hash_tests') 
-d.exists()
-file = "F9-9-2020_14-59-30_Training2_56.d"
-p = d/file
 
-source_hash = dirhash(p, 'sha256')
-target = Path("M:/RAW_test")/file
-cp(p, target)
+logging.basicConfig(filename='test.log',
+                    level=logging.INFO)
 
-t = Sender('192.168.1.100:9002')
-t.greet()
-target_hash = t.get_check_sum(target)
+source = Path(r"D:\Data\raw\F2020-11-09_10-34-00_M201106_044_412.d")
+target = Path(r"M:\RAW\F2020-11-09_10-34-00_M201106_044_412.d")
+server = Sender('192.168.1.100:9002')
+server.greet()
+target_hash = server.get_check_sum(target)
 
-source_hash == target_hash
+all_source_hashes_aggree(source, target, server)
 
-# t.get_check_sum(target) == check_sum(r'D:\Data\raw_sync_test\hash_tests\F9-9-2020_14-59-30_Training2_56.d')
-# t.get_check_sum(r'M:\test_sync2\F9-9-2020_14-59-30_Training2_56.d\analysis.baf') == check_sum(r'D:\Data\raw_sync_test\hash_tests\F9-9-2020_14-59-30_Training2_56.d\analysis.baf')
 
-# check_sum(r'D:\Data\raw_sync_test\HASSh_tests\F9-9-2020_14-59-30_Training2_56.d')
+
+
+

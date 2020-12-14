@@ -8,7 +8,7 @@ from platform import system
 Path = lambda p: pathlib.Path(p).expanduser().resolve()
 
 
-def robocopy(source, target, file_name_list=[], params='/it /r:10 /w:10 /E /z'):
+def robocopy(source, target, file_name_list=[], params='/it /r:10 /w:10 /E /Z'):
     """Copy files.
     
     /is copies same files:

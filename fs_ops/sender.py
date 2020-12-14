@@ -27,7 +27,6 @@ class Sender(object):
             return False
 
     def __sock(self, route, message=None):
-        print(f"{self.url}/{route}")
         request = Request(f"{self.url}/{route}")
         request.add_header('Content-Type', 'application/json; charset=utf-8')
         if message is None:

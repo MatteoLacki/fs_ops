@@ -4,8 +4,8 @@ import platform
 settings = dict(
     name='fs_ops',
     packages=find_packages(),
-    version='0.0.4',
-    description='Description.',
+    version='0.0.5',
+    description='Basic fs operations on stupid windows.',
     long_description='Long description.',
     author='MatteoLacki',
     author_email='matteo.lacki@gmail.com',
@@ -17,7 +17,8 @@ settings = dict(
                  'Topic :: Scientific/Engineering :: Chemistry',
                  'Programming Language :: Python :: 3.6',
                  'Programming Language :: Python :: 3.7'],
-    install_requires=['checksumdir', 'flask'],
+    # install_requires=['checksumdir', 'flask'],
+    install_requires=['flask'],
     scripts = ["bin/grep_paths.py",
                "bin/msync.py"])
 

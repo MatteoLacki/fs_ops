@@ -13,7 +13,7 @@ import sys
 from fs_ops.utils import age
 from fs_ops.base import cp, mv, rm
 from fs_ops.sender import Sender
-from fs_ops.checksums import check_sum as check_sum_here
+from fs_ops.checksums import all_source_hashes_aggree
 
 
 Path = lambda p: pathlib.Path(p).expanduser().resolve()
@@ -58,9 +58,8 @@ if ap.server_ip_port is not None:
         log.error("Server down.")
         input("Press a key to finish the program.")
         sys.exit()
-    check_sum_there = server.get_check_sum
 else:
-    check_sum_there = check_sum_here = lambda x: 0
+    all_source_hashes_aggree = lambda x: True
 
 
 def iter_sources_targes(source, target, patterns):
@@ -68,6 +67,7 @@ def iter_sources_targes(source, target, patterns):
         for s in source.glob(pat):
             t = target/s.name 
             yield s,t
+
 st = list(sorted(iter_sources_targes(ap.source, ap.target, ap.patterns)))
 if ap.debug:
     pprint(st)
@@ -76,25 +76,20 @@ if ap.debug:
 for s,t in st:
     if age(s) >= ap.min_copy_hours:
         log.info(f'Copying {s} to {t}.')
-        local_checksum = check_sum_here(s)
         cp(s,t)
-        remote_checksum = check_sum_there(t)
-        log.info(f'Sha256 for {s} = {local_checksum}')
-        log.info(f'Sha256 for {t} = {remote_checksum}')
-        if local_checksum != remote_checksum:
-            log.error(f'{s} and {t} have different checksums.')
-            input("Press a key to finish the program.")
-            sys.exit()
-        else:
-            log.info(f'checksums aggree')
+
+        if all_source_hashes_aggree(s, t, server):
             if ap.min_delete_hours >= 0:
                 if age(s) >= ap.min_delete_hours:
                     log.info(f'Removing {s}.')
-                    rm(s) 
+                    rm(s)
                 else:
                     log.info(f'{s} is too young to delete: {age(s)}')
             else:
                 log.info('copy only mode')
+        else:
+            log.error(f'{s} and {t} have different checksums.')
+            sys.exit()
     else:
         log.info(f'{s} is too young to copy: {age(s)}')
 

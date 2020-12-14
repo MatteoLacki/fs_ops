@@ -13,7 +13,7 @@ class Sender(object):
     def __init__(self,
                  ip_port, 
                  encoding="cp1251"):
-        self.url = f"http://{ip_port}/"
+        self.url = f"http://{ip_port}"
         self.encoding = encoding
         self.connected = self.greet()
 
@@ -27,6 +27,7 @@ class Sender(object):
             return False
 
     def __sock(self, route, message=None):
+        print(f"{self.url}/{route}")
         request = Request(f"{self.url}/{route}")
         request.add_header('Content-Type', 'application/json; charset=utf-8')
         if message is None:

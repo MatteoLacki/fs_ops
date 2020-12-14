@@ -54,8 +54,8 @@ log = logging.getLogger('syncFiles.py')
 if ap.server_ip_port is not None:
     server = Sender(ap.server_ip_port, ap.server_message_encoding)
     if not server.greet(): 
-        print("Server down. Not checking hashes is dangerous. Stopping here!!")
-        print("Consider setting up the server or running this script without 'server_ip_port' argument.")
+        print("Server down. Not checking hashes is dangerous. Stopping here!!\nConsider setting up the server or running this script without 'server_ip_port' argument.")
+        log.error("Server down.")
         input("Press a key to finish the program.")
         sys.exit()
     check_sum_there = server.get_check_sum

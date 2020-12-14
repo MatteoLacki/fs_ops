@@ -1,3 +1,4 @@
+import itertools
 import os
 from random import choice
 from string import ascii_letters, digits
@@ -27,3 +28,12 @@ def age(file_path, unit='h', init_time=os.path.getmtime):
             'm': age_in_s/60,
             'h': age_in_s/3600,
             'd': age_in_s/86400 }[unit]
+
+
+def min_age(source, **kwds):
+    if source.is_file():
+        paths = {source}
+    else:
+        paths = set(itertools.chain(source.glob("*"),
+                                    source.glob("**/*")))
+    return min(age(path, **kwds) for path in paths)

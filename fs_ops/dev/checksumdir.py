@@ -4,6 +4,7 @@ from checksumdir import dirhash
 from pathlib import Path
 from collections import Counter
 import logging
+import itertools
 
 from fs_ops.utils import age
 from fs_ops.base import cp
@@ -23,6 +24,14 @@ target_hash = server.get_check_sum(target)
 all_source_hashes_aggree(source, target, server)
 
 
+age(source)
 
+def min_age(source):
+    if source.is_file():
+        paths = {source}
+    else:
+        paths = set(itertools.chain(source.glob("*"),
+                                    source.glob("**/*")))
+    return min(age(path) for path in paths)
 
-
+min_age(source)

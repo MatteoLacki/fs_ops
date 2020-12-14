@@ -10,7 +10,7 @@ from platform import system
 from pprint import pprint
 import sys
 
-from fs_ops.utils import age
+from fs_ops.utils import min_age
 from fs_ops.base import cp, mv, rm
 from fs_ops.sender import Sender
 from fs_ops.checksums import all_source_hashes_aggree
@@ -68,29 +68,30 @@ def iter_sources_targes(source, target, patterns):
             t = target/s.name 
             yield s,t
 
+
 st = list(sorted(iter_sources_targes(ap.source, ap.target, ap.patterns)))
 if ap.debug:
     pprint(st)
 
 
 for s,t in st:
-    if age(s) >= ap.min_copy_hours:
+    age = min_age(s, unit='h')
+    if age >= ap.min_copy_hours:
         log.info(f'Copying {s} to {t}.')
         cp(s,t)
-
         if all_source_hashes_aggree(s, t, server):
             if ap.min_delete_hours >= 0:
-                if age(s) >= ap.min_delete_hours:
+                if age >= ap.min_delete_hours:
                     log.info(f'Removing {s}.')
                     rm(s)
                 else:
-                    log.info(f'{s} is too young to delete: {age(s)}')
+                    log.info(f'{s} is too young to delete: min age = {age}')
             else:
                 log.info('copy only mode')
         else:
             log.error(f'{s} and {t} have different checksums.')
             sys.exit()
     else:
-        log.info(f'{s} is too young to copy: {age(s)}')
+        log.info(f'{s} is too young to copy: min age = {age}')
 
 

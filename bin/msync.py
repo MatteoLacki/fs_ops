@@ -69,6 +69,9 @@ def iter_sources_targes(source, target, patterns):
             yield s,t
 
 
+assert ap.min_copy_hours < ap.min_delete_hours, "You will delete the files that were not copied! Naugthy, naugthy..."
+
+
 st = list(sorted(iter_sources_targes(ap.source, ap.target, ap.patterns)))
 if ap.debug:
     pprint(st)

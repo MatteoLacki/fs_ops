@@ -7,7 +7,7 @@ import logging
 import itertools
 
 from fs_ops.utils import age
-from fs_ops.base import cp
+from fs_ops.base import cp, no_handles
 from fs_ops.sender import Sender
 from fs_ops.checksums import check_sum, file_check_sum, all_source_hashes_aggree
 
@@ -24,14 +24,11 @@ target_hash = server.get_check_sum(target)
 all_source_hashes_aggree(source, target, server)
 
 
-age(source)
+file = r"D:\Data\raw\M201203_006_Slot1-1_1_701.d\c37c7911-0a52-4110-96c3-15b5b1718389_1.mcf_idx"
 
-def min_age(source):
-    if source.is_file():
-        paths = {source}
-    else:
-        paths = set(itertools.chain(source.glob("*"),
-                                    source.glob("**/*")))
-    return min(age(path) for path in paths)
+no_handles(r"D:\Data\raw\M201203_006_Slot1-1_1_701.d\SyncHelper")
+no_handles(r"D:\Data\raw\M201203_006_Slot1-1_1_701.d\SyncHelper")
+no_handles(r"D:\Data\raw - Copy\F2020-11-09_10-34-00_M201106_044_412.d\SyncHelper")
+no_handles(r"D:\Data\raw - Copy\F2020-11-09_10-34-00_M201106_044_412.d")
 
-min_age(source)
+

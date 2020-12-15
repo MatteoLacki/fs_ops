@@ -1,7 +1,13 @@
 """Matteo's simple rsync clone: msync
 
 No support for check-sums (our LAN is stable).
-Simple wrapper around robocopy.
+"Simple" wrapper around robocopy.
+General remark: fuck Windows.
+
+Rules:
+When we copy things on the server, we then check their hashes.
+We only check the hashes of files.
+Each time we copy something, we only check the hashes of things that can be copied.
 """
 import argparse
 import logging
@@ -11,7 +17,7 @@ from pprint import pprint
 import sys
 
 from fs_ops.utils import min_age
-from fs_ops.base import cp, mv, rm
+from fs_ops.base import cp, mv, rm, no_handles
 from fs_ops.sender import Sender
 from fs_ops.checksums import all_source_hashes_aggree
 
@@ -72,19 +78,21 @@ def iter_sources_targes(source, target, patterns):
 assert ap.min_copy_hours < ap.min_delete_hours, "You will delete the files that were not copied! Naugthy, naugthy..."
 
 
-st = list(sorted(iter_sources_targes(ap.source, ap.target, ap.patterns)))
+sources_and_targets = list(sorted(iter_sources_targes(ap.source, ap.target, ap.patterns)))
 if ap.debug:
-    pprint(st)
+    pprint(sources_and_targets)
 
 
-for s,t in st:
+for s,t in sources_and_targets:
     age = min_age(s, unit='h')
     if age >= ap.min_copy_hours:
         log.info(f'Copying {s} to {t}.')
         cp(s,t)
+        # Check that all files in source have the same hashes as 
+        # their equivalents on the target
         if all_source_hashes_aggree(s, t, server):
             if ap.min_delete_hours >= 0:
-                if age >= ap.min_delete_hours:
+                if age >= ap.min_delete_hours and no_handles(s):
                     log.info(f'Removing {s}.')
                     rm(s)
                 else:
@@ -96,5 +104,4 @@ for s,t in st:
             sys.exit()
     else:
         log.info(f'{s} is too young to copy: min age = {age}')
-
 

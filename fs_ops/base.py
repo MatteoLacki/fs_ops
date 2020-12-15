@@ -1,8 +1,10 @@
+import itertools
+import os
+import pathlib
+from platform import system
 import shutil
 import subprocess
-import pathlib
 
-from platform import system
 
 
 Path = lambda p: pathlib.Path(p).expanduser().resolve()
@@ -136,3 +138,31 @@ def rm(p):
         else:
             print('Trying to delete a folder.')
             shutil.rmtree(str(p), ignore_errors=True)
+
+
+def no_handles_file(file):
+    """Check if a file does not have handles.
+
+    Surprisingly, this works in our case.
+    """
+    file = str(file)
+    if os.path.exists(file):
+        try:
+            os.rename(file, file+"_")
+            os.rename(file+"_", file)
+        except PermissionError:
+            return False
+        except KeyboardInterrupt:
+            raise KeyboardInterrupt("You interrupted me.")
+        except SystemExit:
+            raise SystemExit("System interrupted me.")
+    return True
+
+
+def no_handles(path):
+    path = pathlib.Path(path)
+    if path.is_file():
+        paths = {path}
+    else:
+        paths = set(itertools.chain(path.glob("*"), path.glob("**/*")))
+    return all(no_handles_file(file_path) for file_path in paths)

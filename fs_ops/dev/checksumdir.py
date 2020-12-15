@@ -31,4 +31,5 @@ no_handles(r"D:\Data\raw\M201203_006_Slot1-1_1_701.d\SyncHelper")
 no_handles(r"D:\Data\raw - Copy\F2020-11-09_10-34-00_M201106_044_412.d\SyncHelper")
 no_handles(r"D:\Data\raw - Copy\F2020-11-09_10-34-00_M201106_044_412.d")
 
-
+no_handles(r"D:\Data\raw\M201203_006_Slot1-1_1_701.d")
+no_handles(r"D:\Data\raw\M201203_006_Slot1-1_1_701.d\analysis.tdf_bin")

@@ -138,6 +138,8 @@ def rm(p):
         else:
             print('Trying to delete a folder.')
             shutil.rmtree(str(p), ignore_errors=True)
+    if p.exists():
+        raise FileExistsError(f"did not remove {p}")
 
 
 def no_handles_file(file):

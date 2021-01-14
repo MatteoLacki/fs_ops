@@ -44,6 +44,8 @@ ARG('--log_path', type=Path, help='Path to store logs.',
     default='~/Projects/fs_ops/sync.log' if system() == 'Linux' else 'C:/Projects/fs_ops/sync.log')
 ARG('--server_ip_port', help='the.ip.of.server:port')
 ARG('--server_message_encoding', help='Message encoding.', default='cp1251')
+ARG('--error_path', type=Path, help='Path to error logs.',
+    default='C:/Users/Admin/Desktop/copy_errors.txt')
 
 ap = ap.parse_args()
 if ap.debug:
@@ -84,7 +86,12 @@ if ap.debug:
 
 
 for s,t in sources_and_targets:
-    age = min_age(s, unit='h')
+    try:
+        age = min_age(s, unit='h')
+    except ValueError as e:
+        with open(ap.error_path,'a') as f:
+            f.write(f"Problem with {s}\n{repr(e)}.\nCheck proper logs at {ap.log_path}!")            
+        continue
     if age >= ap.min_copy_hours:
         log.info(f'Copying {s} to {t}.')
         cp(s,t)
@@ -94,7 +101,11 @@ for s,t in sources_and_targets:
             if ap.min_delete_hours >= 0:
                 if age >= ap.min_delete_hours and no_handles(s):
                     log.info(f'Removing {s}.')
-                    rm(s)
+                    try:
+                        rm(s)
+                    except FileExistsError as e:
+                        with open(ap.error_path,'a') as f:
+                            f.write(f"Problem with {s}\n{repr(e)}")          
                 else:
                     log.info(f'{s} is too young to delete: min age = {age}')
             else:
@@ -104,4 +115,5 @@ for s,t in sources_and_targets:
             sys.exit()
     else:
         log.info(f'{s} is too young to copy: min age = {age}')
+
 
